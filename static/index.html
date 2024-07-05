@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Check Waitlist Position</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="static/nice.css">
+    <script>
+        async function checkPosition() {
+            const studentId = document.getElementById('studentId').value;
+            const response = await fetch(`/student/${studentId}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                // Clear previous error message
+                document.getElementById('result').innerText = '';
+
+                // Update student data
+                document.getElementById('name').innerText = `Name: ${data.name}`;
+                document.getElementById('position').innerText = `Position: ${data.position}`;
+                document.getElementById('activeStatus').innerText = `Active Status: ${data.active_status}`;
+            } else {
+                // Display error message
+                document.getElementById('result').innerText = data.error;
+
+                // Clear student data
+                document.getElementById('name').innerText = '';
+                document.getElementById('position').innerText = '';
+                document.getElementById('activeStatus').innerText = '';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Check Waitlist Position</h1> <!-- Moved inside the container -->
+        <input type="text" id="studentId" placeholder="Enter Student ID">
+        <button onclick="checkPosition()">Check</button>
+        <p id="name"></p>
+        <p id="position"></p>
+        <p id="activeStatus"></p>
+        <p id="result"></p>
+    </div>
+</body>
+</html>
