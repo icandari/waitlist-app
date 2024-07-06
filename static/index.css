@@ -74,3 +74,13 @@ p {
         font-size: 14px;
     }
 }
+
+/* Styles for active status */
+.active-status {
+    color: green;
+}
+
+/* Styles for inactive status */
+.inactive-status {
+    color: red;
+}
