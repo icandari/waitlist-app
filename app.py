@@ -1,8 +1,12 @@
 from flask import Flask, request, jsonify, send_from_directory
 import pandas as pd
 import sqlite3
+import logging
 
 app = Flask(__name__, static_folder='static')
+
+# Set logging to show only errors
+logging.basicConfig(level=logging.ERROR)
 
 def get_db_connection():
     conn = sqlite3.connect('students.db')
@@ -14,7 +18,7 @@ def update_database():
     df = pd.read_excel('students.xlsx')
 
     # Ensure column names are correctly set
-    df.columns = ['Name', 'StudentID', 'Registered', 'GettingMarried']
+    df.columns = ['Name', 'StudentID', 'Registered', 'GettingMarried', 'ApplicationDate']
 
     # Connect to SQLite database
     conn = sqlite3.connect('students.db')
@@ -36,24 +40,27 @@ def get_student(student_id):
         
         # Determine position in Excel file
         excel_data = pd.read_excel('students.xlsx')
-        excel_data.columns = ['Name', 'StudentID', 'Registered', 'GettingMarried']
-        student_index = excel_data.index[excel_data['StudentID'] == int(student_id)][0] + 1  # +1 to convert zero-indexed to 1-indexed position
+        excel_data.columns = ['Name', 'StudentID', 'Registered', 'GettingMarried', 'ApplicationDate']
+        student_index = int(excel_data.index[excel_data['StudentID'] == int(student_id)][0]) + 1  # +1 to convert zero-indexed to 1-indexed position
         
         # Determine registration and marriage status
         registered = student['Registered']
         getting_married = student['GettingMarried']
+        application_date = student['ApplicationDate']
         registration_status = "Active" if registered == 1 and getting_married == 1 else "Inactive"
         
         if registration_status == "Active":
             # Filter active students and determine position among them
             active_students = excel_data[(excel_data['Registered'] == 1) & (excel_data['GettingMarried'] == 1)]
             active_student_ids = active_students['StudentID'].tolist()
-            active_position = active_student_ids.index(int(student_id)) + 1  # +1 to convert zero-indexed to 1-indexed position
+            active_position = int(active_student_ids.index(int(student_id))) + 1  # +1 to convert zero-indexed to 1-indexed position
             
             message = "Well done! Our records indicate you are on the active waitlist for next semester because you are registered for classes and getting married in the next semester."
             response = {
                 "name": student['Name'],
-                "position": f"Upcoming Semester Position {active_position}",
+                "application_date": application_date,
+                "position_label": "Upcoming Semester Position",
+                "position": active_position,
                 "active_status": registration_status,
                 "message": message
             }
@@ -65,7 +72,9 @@ def get_student(student_id):
                        "Contact housing@byuh.edu if our records are incorrect.")
             response = {
                 "name": student['Name'],
-                "position": f"Position {student_index}",
+                "application_date": application_date,
+                "position_label": "General Position",
+                "position": student_index,
                 "active_status": registration_status,
                 "message": message
             }

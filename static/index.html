@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Check Waitlist Position</title>
-    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="static/Index.css">
     <script>
         async function checkPosition() {
             const studentId = document.getElementById('studentId').value;
@@ -11,15 +11,17 @@
 
             if (response.ok) {
                 document.getElementById('name').innerText = `Name: ${data.name}`;
-                document.getElementById('position').innerText = `Position: ${data.position}`;
+                document.getElementById('application_date').innerText = `Application Date: ${data.application_date}`;
+                document.getElementById('position').innerText = `${data.position_label}: ${data.position}`;
                 document.getElementById('activeStatus').innerText = `Active Status: ${data.active_status}`;
                 document.getElementById('message').innerText = data.message;
-                document.getElementById('result').innerText = '';
+                document.getElementById('result').innerText = "";
             } else {
-                document.getElementById('name').innerText = '';
-                document.getElementById('position').innerText = '';
-                document.getElementById('activeStatus').innerText = '';
-                document.getElementById('message').innerText = '';
+                document.getElementById('name').innerText = "";
+                document.getElementById('application_date').innerText = "";
+                document.getElementById('position').innerText = "";
+                document.getElementById('activeStatus').innerText = "";
+                document.getElementById('message').innerText = "";
                 document.getElementById('result').innerText = data.error;
             }
         }
@@ -31,6 +33,7 @@
         <input type="text" id="studentId" placeholder="Enter Student ID">
         <button onclick="checkPosition()">Check</button>
         <p id="name"></p>
+        <p id="application_date"></p>
         <p id="position"></p>
         <p id="activeStatus"></p>
         <p id="message"></p>
