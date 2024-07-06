@@ -67,6 +67,7 @@ def get_student(student_id):
         else:
             message = ("Our records indicate that you are not registered for classes, or not getting married in the upcoming semester. "
                        "In order to be on the active waitlist for next semester, you must be registered for classes and be getting married next semester. "
+                        ""
                        "You will continue to be on the general waitlist until both requirements are fulfilled. "
                        "Please ensure you are registered for classes and have submitted a TVA application with a wedding date in the upcoming semester. "
                        "Contact housing@byuh.edu if our records are incorrect.")
@@ -80,6 +81,11 @@ def get_student(student_id):
             }
         
         return jsonify(response)
+    
+    except Exception as e:
+        logging.error(f"Error retrieving student data: {e}")
+        return jsonify({'error': 'Internal Server Error'}), 500
+    
     finally:
         conn.close()
 

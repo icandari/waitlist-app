@@ -2,7 +2,21 @@
 <html>
 <head>
     <title>Check Waitlist Position</title>
-    <link rel="stylesheet" href="/static/index.css">
+    <link rel="stylesheet" type="text/css" href="static/Index.css">
+    <style>
+        .logo {
+            float: left; /* Align logo to the left */
+            margin-right: 20px; /* Adjust margin as needed */
+        }
+        .separator {
+            border-left: 1px solid black; /* Vertical black line separator */
+            height: 100%; /* Ensure full height of the container */
+            margin: 0 20px; /* Adjust margin as needed */
+        }
+        .logo img {
+            height: 60px; /* Adjust logo height as needed */
+        }
+    </style>
     <script>
         async function checkPosition() {
             const studentId = document.getElementById('studentId').value;
@@ -11,34 +25,37 @@
 
             if (response.ok) {
                 document.getElementById('name').innerText = `Name: ${data.name}`;
+                document.getElementById('application_date').innerText = `Application Date: ${data.application_date}`;
                 document.getElementById('position').innerText = `${data.position_label}: ${data.position}`;
-                document.getElementById('activeStatus').innerText = `Active Status: `;
-                
-                // Update active status text and color
-                const activeStatusElement = document.getElementById('activeStatus');
-                activeStatusElement.innerText += data.active_status;
-                activeStatusElement.classList.add(data.active_status === 'Active' ? 'active-status' : 'inactive-status');
-
-                // Display application date
-                document.getElementById('applicationDate').innerText = `Application Date: ${data.application_date}`;
-
-                // Display message
+                document.getElementById('activeStatus').innerText = `Active Status: ${data.active_status}`;
                 document.getElementById('message').innerText = data.message;
+                document.getElementById('result').innerText = "";
             } else {
+                document.getElementById('name').innerText = "";
+                document.getElementById('application_date').innerText = "";
+                document.getElementById('position').innerText = "";
+                document.getElementById('activeStatus').innerText = "";
+                document.getElementById('message').innerText = "";
                 document.getElementById('result').innerText = data.error;
             }
         }
     </script>
 </head>
 <body>
-    <h1>Check Waitlist Position</h1>
-    <input type="text" id="studentId" placeholder="Enter Student ID">
-    <button onclick="checkPosition()">Check</button>
-    <p id="name"></p>
-    <p id="position"></p>
-    <p id="activeStatus"></p>
-    <p id="applicationDate"></p>
-    <p id="message"></p>
-    <p id="result"></p>
+    <div class="container">
+        <div class="logo">
+            <img src="static/BYUH.png" alt="Logo" height="60">
+        </div>
+        <div class="separator"></div>
+        <h1>Check Waitlist Position</h1>
+        <input type="text" id="studentId" placeholder="Enter Student ID">
+        <button onclick="checkPosition()">Check</button>
+        <p id="name"></p>
+        <p id="application_date"></p>
+        <p id="position"></p>
+        <p id="activeStatus"></p>
+        <p id="message"></p>
+        <p id="result"></p>
+    </div>
 </body>
 </html>
