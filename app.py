@@ -49,43 +49,41 @@ def get_student(student_id):
         application_date = student['ApplicationDate']
         registration_status = "Active" if registered == 1 and getting_married == 1 else "Inactive"
         
+        general_position = student_index
+        
         if registration_status == "Active":
             # Filter active students and determine position among them
             active_students = excel_data[(excel_data['Registered'] == 1) & (excel_data['GettingMarried'] == 1)]
             active_student_ids = active_students['StudentID'].tolist()
             active_position = int(active_student_ids.index(int(student_id))) + 1  # +1 to convert zero-indexed to 1-indexed position
             
+            # Determine the number of inactive students ahead of the active student
+            inactive_students_ahead = general_position - active_position
+            
             message = "Well done! Our records indicate you are on the active waitlist for next semester because you are registered for classes and getting married in the next semester."
             response = {
-                "name": student['Name'],
                 "application_date": application_date,
+                "general_position": general_position,
                 "position_label": "Upcoming Semester Position",
-                "position": active_position,
+                "active_position": active_position,
+                "inactive_ahead": inactive_students_ahead,
                 "active_status": registration_status,
                 "message": message
             }
         else:
             message = ("Our records indicate that you are not registered for classes, or not getting married in the upcoming semester. "
-                       "In order to be on the active waitlist for next semester, you must be registered for classes and be getting married next semester. "
-                        ""
+                       "In order to be on the active waitlist for next semester, you must be registered for classes and be getting married next semester. <br><br>"
                        "You will continue to be on the general waitlist until both requirements are fulfilled. "
                        "Please ensure you are registered for classes and have submitted a TVA application with a wedding date in the upcoming semester. "
                        "Contact housing@byuh.edu if our records are incorrect.")
             response = {
-                "name": student['Name'],
                 "application_date": application_date,
-                "position_label": "General Position",
-                "position": student_index,
+                "general_position": general_position,
                 "active_status": registration_status,
                 "message": message
             }
         
         return jsonify(response)
-    
-    except Exception as e:
-        logging.error(f"Error retrieving student data: {e}")
-        return jsonify({'error': 'Internal Server Error'}), 500
-    
     finally:
         conn.close()
 
